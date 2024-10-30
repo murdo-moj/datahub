@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import List, Optional
 
 import sqlparse
@@ -11,12 +12,22 @@ from datahub.sql_parsing.sqlglot_lineage import (
 
 SPECIAL_CHARACTERS = ["#(lf)", "(lf)", "#(tab)"]
 
+ANSI_ESCAPE_CHARACTERS = r"\x1b\[[0-9;]*m"
+
 logger = logging.getLogger(__name__)
 
 
 def remove_special_characters(native_query: str) -> str:
     for char in SPECIAL_CHARACTERS:
         native_query = native_query.replace(char, " ")
+
+    ansi_escape_regx = re.compile(ANSI_ESCAPE_CHARACTERS)
+
+    native_query = ansi_escape_regx.sub("", native_query)
+
+    # Replace "" quotes by ". Sqlglot is not handling column name alias surrounded with two double quotes
+
+    native_query = native_query.replace('""', '"')
 
     return native_query
 
