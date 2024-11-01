@@ -128,6 +128,7 @@ transformers:
 | `ownership_type`   |          | string       | "DATAOWNER" | ownership type of the owners (either as enum or ownership type urn)                                        |
 | `replace_existing` |          | boolean      | `false`     | Whether to remove ownership from entity sent by ingestion source.                                          |
 | `semantics`        |          | enum         | `OVERWRITE` | Whether to OVERWRITE or PATCH the entity present on DataHub GMS.                                           |
+| `is_container`     |          | bool    | `false`    | Whether to also consider a container or not. If true, then ownership will be attached to both the dataset and its container. |
 | `on_conflict`      |          | enum         | `DO_UPDATE` | Whether to make changes if domains already exist. If set to DO_NOTHING, `semantics` setting is irrelevant. |
 
 For transformer behaviour on `replace_existing` and `semantics`, please refer section [Relationship Between replace_existing And semantics](#relationship-between-replace_existing-and-semantics).
@@ -189,6 +190,19 @@ transformers:
             - "urn:li:corpGroup:groupname"
           ownership_type: "PRODUCER"
     ```
+- Add owner to dataset and its containers
+  ```yaml
+  transformers:
+    - type: "simple_add_dataset_ownership"
+      config:
+        is_container: true
+        semantics: PATCH 
+          owner_urns:
+            - "urn:li:corpuser:username1"
+            - "urn:li:corpuser:username2"
+            - "urn:li:corpGroup:groupname"
+          ownership_type: "PRODUCER"
+  ```
 
 ## Pattern Add Dataset ownership 
 ### Config Details
@@ -1048,8 +1062,11 @@ transformers:
 | `domains`          | ✅        | list[union[urn, str]]  |               | List of simple domain name or domain urns.                       |
 | `replace_existing` |          | boolean                | `false`       | Whether to remove domains from entity sent by ingestion source.   |
 | `semantics`        |          | enum                   | `OVERWRITE`   | Whether to OVERWRITE or PATCH the entity present on DataHub GMS. |
+| `is_container`     |          | bool    | `false`    | Whether to also consider a container or not. If true, then ownership will be attached to both the dataset and its container. |
 
 For transformer behaviour on `replace_existing` and `semantics`, please refer section [Relationship Between replace_existing And semantics](#relationship-between-replace_existing-and-semantics).
+
+If the is_container field is set to true, the module will not only attach the domains to the matching datasets but will also find and attach containers associated with those datasets. This means that both the datasets and their containers will be associated with the specified owners.
 
 <br/>
 
@@ -1100,6 +1117,17 @@ transformers:
             - "urn:li:domain:engineering"
             - "urn:li:domain:hr"
     ```
+- Add domains to dataset and its containers
+  ```yaml
+  transformers:
+    - type: "simple_add_dataset_domain"
+      config:
+        is_container: true
+        semantics: PATCH
+          domains:
+            - "urn:li:domain:engineering"
+            - "urn:li:domain:hr"
+  ```
 
 ## Pattern Add Dataset domains 
 ### Config Details

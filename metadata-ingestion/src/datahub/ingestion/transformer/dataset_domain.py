@@ -47,6 +47,7 @@ class AddDatasetDomainSemanticsConfig(TransformerSemanticsConfigModel):
 class SimpleDatasetDomainSemanticsConfig(TransformerSemanticsConfigModel):
     domains: List[str]
     on_conflict: TransformerOnConflict = TransformerOnConflict.DO_UPDATE
+    is_container: bool = False
 
 
 class PatternDatasetDomainSemanticsConfig(TransformerSemanticsConfigModel):
@@ -201,6 +202,7 @@ class SimpleAddDatasetDomain(AddDatasetDomain):
         generic_config = AddDatasetDomainSemanticsConfig(
             get_domains_to_add=lambda _: domains,
             **config.dict(exclude={"domains"}),
+            is_container=config.is_container,
         )
         super().__init__(generic_config, ctx)
 

@@ -163,6 +163,7 @@ class DatasetOwnershipBaseConfig(TransformerSemanticsConfigModel):
 class SimpleDatasetOwnershipConfig(DatasetOwnershipBaseConfig):
     owner_urns: List[str]
     default_actor: str = builder.make_user_urn("etl")
+    is_container: bool = False
 
 
 class SimpleAddDatasetOwnership(AddDatasetOwnership):
@@ -186,6 +187,7 @@ class SimpleAddDatasetOwnership(AddDatasetOwnership):
             default_actor=config.default_actor,
             semantics=config.semantics,
             replace_existing=config.replace_existing,
+            is_container=config.is_container,
         )
         super().__init__(generic_config, ctx)
 
